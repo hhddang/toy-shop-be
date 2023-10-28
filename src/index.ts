@@ -1,13 +1,32 @@
 import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import { brandRouter } from "./routes/brand.route";
+
+dotenv.config();
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "success" });
-});
 
-const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`Server started at http://localhost:${PORT}`);
-});
+mongoose
+  .connect(process.env.MG_URI!)
+  .then(() => {
+    console.log("Connected to Mongodb");
+    StartServer();
+  })
+  .catch((e) => {
+    console.log("Error on connecting to Mongodb: ", e);
+  });
+
+const StartServer = () => {
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.get("/", (req, res) => {
+    res.status(200).json({ message: "success" });
+  });
+  app.use("/api/brands", brandRouter);
+
+  const PORT = 4000;
+  app.listen(PORT, () => {
+    console.log(`Server started at http://localhost:${PORT}`);
+  });
+};
