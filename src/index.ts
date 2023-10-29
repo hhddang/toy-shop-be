@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import { brandRouter } from "./routes/brand.route";
 
 dotenv.config();
@@ -20,9 +21,13 @@ mongoose
 const StartServer = () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.get("/", (req, res) => {
-    res.status(200).json({ message: "success" });
-  });
+  app.use(
+    cors({
+      credentials: true,
+      origin: process.env.FE_URI,
+    })
+  );
+
   app.use("/api/brands", brandRouter);
 
   const PORT = 4000;

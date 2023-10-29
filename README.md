@@ -198,3 +198,32 @@ const StartServer = () => {
   // app.listen()
 }
 ```
+
+## 4. Config CORS for Front-end fetching
+
+Install packages
+
+```
+npm i cors
+npm i --save-dev @types/cors
+```
+
+Edit _src/index.ts_
+
+```
+//...
+import cors from "cors";
+
+//...
+const StartServer = () => {
+  //...
+  app.use(
+    cors({
+      credentials: true,
+      origin: process.env.FE_URI,
+    })
+  );
+
+  // app.listen()
+}
+```
