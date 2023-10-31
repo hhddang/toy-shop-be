@@ -85,7 +85,7 @@ const deleteBrandById = (req: Request, res: Response, next: NextFunction) => {
     .catch(() => res.status(500).json(failedResponse("Cannot delete by id")));
 };
 
-export default {
+export {
   createBrand,
   readAllBrand,
   readBrandById,

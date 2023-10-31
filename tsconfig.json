@@ -6,6 +6,14 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "baseUrl": "src",
+    "paths": {
+      "@routes": ["./routes"],
+      "@controllers/*": ["./controllers/*"],
+      "@models": ["./models"],
+      "@types": ["./types"],
+      "@utils": ["./utils"]
+    }
   }
 }

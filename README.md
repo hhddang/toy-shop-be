@@ -228,6 +228,121 @@ const StartServer = () => {
 }
 ```
 
-## 5. Incoming feature
-1. JWT authentication
-2. CI/CD
+## 5. JWT Authentication
+
+Install packages:
+
+```
+npm i bcryptjs jsonwebtoken
+npm i -D @types/bcryptjs @types/jsonwebtoken
+```
+
+Create a key named `JWT_SECRET` in _.env_ file.
+
+```
+JWT_SECRET=secret
+```
+
+Then, create a function called `generateToken()` at _src/utils/auth.ts_
+
+```
+import jwt from "jsonwebtoken";
+
+export const generateToken = ({ ...fields }) => {
+  return jwt.sign(
+    {
+      ...fields,
+    },
+    process.env.JWT_SECRET!,
+    {
+      expiresIn: "10h",
+    }
+  );
+};
+```
+
+In _src/controllers/auth.controller_, we have 3 functions: `register()`,`login()`, and `isAuth()` <br/>
+You should define `register()`and `login()` so that response include a JWT token <br/>
+What about `isAuth()`? You will decode JWT token from request header and pass it to the next controller function (for later use)
+
+```
+const isAuth = (req: Request, res: Response, next: NextFunction) => {
+  const { authorization } = req.headers;
+
+  if (authorization) {
+    const token = authorization.split("Bearer ")[1];
+    const decode = jwt.verify(token, process.env.JWT_SECRET!);
+    req.user = decode as {
+      _id: string;
+      name: string;
+      email: string;
+      isAdmin: boolean;
+      token: string;
+    };
+    next();
+  } else {
+    res.status(401).json(failedResponse("JWT token not found in request"));
+  }
+};
+```
+
+It's also need to override Express request so we can have property named `req.user` as above. <br/>
+Create a file named _src/types/Request.ts_ with content:
+
+```
+/* eslint-disable @typescript-eslint/no-unused-vars */
+// eslint-disable-next-line @typescript-eslint/no-namespace
+declare namespace Express {
+  export interface Request {
+    user: {
+      _id: string;
+      name: string;
+      email: string;
+      isAdmin: boolean;
+      token: string;
+    };
+  }
+}
+
+```
+
+## 6. Add TS config paths
+
+Add this package:
+
+```
+npm i -D tsconfig-paths
+```
+
+Edit _tsconfig.json_ file
+
+```
+"compilerOptions": {
+  "baseUrl": "src",
+  "paths": {
+    "@models": ["./models"],
+    "@utils/*": ["./utils/*"],
+  }
+}
+```
+
+Edit scripts dev in _package.json_ file. Add `-r tsconfig-paths/register`
+
+```
+  //...
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only -r tsconfig-paths/register --files src/index.ts",
+  },
+```
+
+Now you can easily import with shorter path likes
+
+```
+import { userModel } from "@models";
+import { failedResponse, successResponse, generateToken } from "@utils";
+```
+
+## 7. Incoming feature
+
+1. CI/CD
+2. Deployment

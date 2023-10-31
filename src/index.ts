@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import { brandRouter } from "./routes/brand.route";
+import { brandRouter, userRouter, authRouter } from "@routes";
 
 dotenv.config();
 
@@ -28,6 +28,8 @@ const StartServer = () => {
     })
   );
 
+  app.use("/api/auth", authRouter);
+  app.use("/api/users", userRouter);
   app.use("/api/brands", brandRouter);
 
   const PORT = 4000;
