@@ -1,4 +1,4 @@
-# Build a API service with ExpressJs, Typescript, Mongoose
+# Build a API service with ExpressJs, Typescript, MongoDB
 
 ## 1. Packages
 
